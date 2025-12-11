@@ -6,9 +6,6 @@ const host = process.env.TAURI_DEV_HOST;
 
 // https://vite.dev/config/
 export default defineConfig({
-  build: {
-    sourcemap: 'hidden',
-  },
   // Prevent vite from obscuring rust errors
   clearScreen: false,
   server: {
@@ -36,4 +33,15 @@ export default defineConfig({
     }),
     tsconfigPaths()
   ],
+  build: {
+    sourcemap: 'hidden',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'utils-vendor': ['dayjs', 'lucide-react', 'zustand'],
+        }
+      }
+    }
+  },
 })
