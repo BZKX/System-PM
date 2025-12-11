@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "system-pm",
-  "version": "0.0.0",
+  "version": "0.1.2",
   "identifier": "com.system-pm.app",
   "build": {
     "beforeDevCommand": "pnpm dev",

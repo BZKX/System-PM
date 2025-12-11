@@ -193,7 +193,7 @@ const Plans: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">上线计划管理</h2>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">上线计划管理</h2>
         <Button type="primary" icon={<Plus size={16} />} onClick={handleAdd}>
           新增计划
         </Button>
@@ -247,8 +247,8 @@ const Plans: React.FC = () => {
             <SystemSelector systems={systems} />
           </Form.Item>
 
-          <div className="p-4 bg-gray-50 rounded-lg mb-4 border border-gray-100">
-            <h3 className="font-medium mb-3 text-gray-700">排期设置</h3>
+          <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg mb-4 border border-gray-100 dark:border-gray-800">
+            <h3 className="font-medium mb-3 text-gray-700 dark:text-gray-300">排期设置</h3>
             <Form.Item
               name="testPeriod"
               label="测试阶段"
@@ -286,8 +286,8 @@ const Plans: React.FC = () => {
                     <p className="mb-2">检测到以下系统在“外灰/全网”阶段存在冲突：</p>
                     <div className="flex flex-col gap-2">
                       {conflicts.map((c, idx) => (
-                        <Card key={idx} size="small" className="bg-red-50 border-red-200">
-                          <div className="text-red-800 flex items-start gap-2">
+                        <Card key={idx} size="small" className="bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900">
+                          <div className="text-red-800 dark:text-red-300 flex items-start gap-2">
                             <AlertTriangle size={16} className="mt-1 flex-shrink-0" />
                             <div>
                               <div className="font-bold">{c.systemName}</div>

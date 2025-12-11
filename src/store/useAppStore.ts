@@ -3,6 +3,9 @@ import { persist } from 'zustand/middleware';
 import { System, Plan } from '../types';
 
 interface AppState {
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+
   systems: System[];
   plans: Plan[];
   
@@ -23,6 +26,9 @@ interface AppState {
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
+      theme: 'light',
+      toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
+
       systems: [],
       plans: [],
 
