@@ -75,31 +75,33 @@ const SystemSelector: React.FC<SystemSelectorProps> = ({
   };
 
   return (
-    <Select
-      mode="multiple"
-      placeholder={placeholder}
-      className={className}
-      disabled={disabled}
-      value={value}
-      onChange={onChange}
-      onPaste={handlePaste}
-      filterOption={(input, option) => {
-        if (!option) return false;
-        const sys = systems.find(s => s.id === option.value);
-        if (!sys) return false;
-        return (
-            sys.name.toLowerCase().includes(input.toLowerCase()) || 
-            sys.department.toLowerCase().includes(input.toLowerCase())
-        );
-      }}
-      optionFilterProp="children"
-    >
-      {systems.map(sys => (
-        <Select.Option key={sys.id} value={sys.id}>
-          {sys.name} <span className="text-gray-400 text-xs ml-1">({sys.department})</span>
-        </Select.Option>
-      ))}
-    </Select>
+    <div onPaste={handlePaste} className="w-full">
+      <Select
+        mode="multiple"
+        placeholder={placeholder}
+        className={className}
+        disabled={disabled}
+        value={value}
+        onChange={onChange}
+        style={{ width: '100%' }}
+        filterOption={(input, option) => {
+          if (!option) return false;
+          const sys = systems.find(s => s.id === option.value);
+          if (!sys) return false;
+          return (
+              sys.name.toLowerCase().includes(input.toLowerCase()) || 
+              sys.department.toLowerCase().includes(input.toLowerCase())
+          );
+        }}
+        optionFilterProp="children"
+      >
+        {systems.map(sys => (
+          <Select.Option key={sys.id} value={sys.id}>
+            {sys.name} <span className="text-gray-400 text-xs ml-1">({sys.department})</span>
+          </Select.Option>
+        ))}
+      </Select>
+    </div>
   );
 };
 

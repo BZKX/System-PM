@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Layout, Menu, theme, Button, Popconfirm, message, Upload, Modal } from 'antd';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { 
-  LayoutDashboard, 
   Server, 
   CalendarDays,
   Menu as MenuIcon,
   Settings,
   Download,
   Upload as UploadIcon,
-  Trash2
+  Trash2,
+  FileChartColumn
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 
@@ -85,7 +85,7 @@ const MainLayout: React.FC = () => {
   const items = [
     {
       key: '/',
-      icon: <LayoutDashboard size={18} />,
+      icon: <FileChartColumn size={18} />,
       label: '仪表盘',
     },
     {
