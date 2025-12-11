@@ -11,9 +11,10 @@ interface PlanRowProps {
   plans: Plan[]; // To check for conflicts against other plans
   startDate: dayjs.Dayjs;
   days: number;
+  isConflict?: boolean;
 }
 
-const PlanRow: React.FC<PlanRowProps> = ({ plan, systems, plans, startDate, days }) => {
+const PlanRow: React.FC<PlanRowProps> = ({ plan, systems, plans, startDate, days, isConflict }) => {
   const schedule = plan.schedule;
   
   // 确定有效的展示开始时间（test -> inner -> outer）
@@ -56,15 +57,18 @@ const PlanRow: React.FC<PlanRowProps> = ({ plan, systems, plans, startDate, days
   const widthPercent = (durationDays / days) * 100;
 
   return (
-    <div className="flex border-b border-gray-100 dark:border-gray-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors" style={{ height: ROW_HEIGHT + 20 }}>
+    <div 
+        className={`flex border-b border-gray-100 dark:border-gray-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors ${isConflict ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : ''}`} 
+        style={{ height: ROW_HEIGHT + 20 }}
+    >
       {/* Sidebar / Header */}
       <div 
-        className="flex-shrink-0 border-r border-gray-200 dark:border-gray-800 flex flex-col justify-center px-4 bg-white dark:bg-gray-900 sticky left-0 z-10"
+        className={`flex-shrink-0 border-r border-gray-200 dark:border-gray-800 flex flex-col justify-center px-4 sticky left-0 z-10 ${isConflict ? 'bg-red-50 dark:bg-red-900/20' : 'bg-white dark:bg-gray-900'}`}
         style={{ width: SIDEBAR_WIDTH }}
       >
-        <div className="font-medium text-gray-800 dark:text-gray-200 truncate" title={plan.name}>{plan.name}</div>
-        <div className="text-xs text-gray-500 dark:text-gray-400 truncate mt-1">PM: {plan.owner}</div>
-        <div className="text-xs text-gray-400 dark:text-gray-500 truncate mt-0.5">系统: {plan.systems.length}个</div>
+        <div className={`font-medium truncate ${isConflict ? 'text-red-700 dark:text-red-300' : 'text-gray-800 dark:text-gray-200'}`} title={plan.name}>{plan.name}</div>
+        <div className={`text-xs truncate mt-1 ${isConflict ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'}`}>PM: {plan.owner}</div>
+        <div className={`text-xs truncate mt-0.5 ${isConflict ? 'text-red-400 dark:text-red-500' : 'text-gray-400 dark:text-gray-500'}`}>系统: {plan.systems.length}个</div>
       </div>
       
       {/* Timeline Content */}
@@ -74,7 +78,7 @@ const PlanRow: React.FC<PlanRowProps> = ({ plan, systems, plans, startDate, days
           {Array.from({ length: days }).map((_, i) => (
             <div 
               key={i} 
-              className="flex-1 border-r border-gray-100 dark:border-gray-800 h-full" 
+              className="flex-1 border-r border-gray-100 dark:border-gray-800 h-full min-w-[40px]" 
             />
           ))}
         </div>

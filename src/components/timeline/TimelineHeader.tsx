@@ -23,7 +23,7 @@ const TimelineHeader: React.FC<TimelineHeaderProps> = ({ startDate, days, sideba
         {dates.map((date) => (
           <div
             key={date.format('YYYY-MM-DD')}
-            className={`flex-1 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 flex flex-col items-center justify-center text-xs ${
+            className={`flex-1 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 flex flex-col items-center justify-center text-xs min-w-[40px] ${
               date.day() === 0 || date.day() === 6 
                 ? 'bg-gray-50 dark:bg-gray-900/50 text-gray-400 dark:text-gray-500' 
                 : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300'

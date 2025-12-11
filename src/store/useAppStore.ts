@@ -21,6 +21,11 @@ interface AppState {
   // Initialization
   setInitialData: (systems: System[], plans: Plan[]) => void;
   clearData: () => void;
+
+  // Guide
+  hasSeenGuide: boolean;
+  completeGuide: () => void;
+  resetGuide: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -50,6 +55,10 @@ export const useAppStore = create<AppState>()(
 
       setInitialData: (systems, plans) => set({ systems, plans }),
       clearData: () => set({ systems: [], plans: [] }),
+
+      hasSeenGuide: false,
+      completeGuide: () => set({ hasSeenGuide: true }),
+      resetGuide: () => set({ hasSeenGuide: false }),
     }),
     {
       name: 'system-pm-storage',

@@ -1,24 +1,27 @@
 import React, { useState, useMemo } from 'react';
 import dayjs from 'dayjs';
-import { Button, DatePicker, Segmented } from 'antd';
+import { Button, DatePicker, Segmented, Select } from 'antd';
 import { ChevronLeft, ChevronRight, LayoutList, Layers } from 'lucide-react';
 import TimelineHeader from './TimelineHeader';
 import ResourceRow from './ResourceRow';
 import PlanRow from './PlanRow';
 import { System, Plan } from '../../types';
+import { SIDEBAR_WIDTH } from './constants';
 
 interface TimelineViewProps {
   systems: System[];
   plans: Plan[];
+  highlightedConflicts?: Conflict[] | null;
 }
 
 type ViewMode = 'resource' | 'plan';
 
-const TimelineView: React.FC<TimelineViewProps> = ({ systems, plans }) => {
+const TimelineView: React.FC<TimelineViewProps> = ({ systems, plans, highlightedConflicts }) => {
   const [startDate, setStartDate] = useState(dayjs().subtract(2, 'day'));
   const [viewMode, setViewMode] = useState<ViewMode>('resource');
   const [showOnlyActive] = useState(true);
-  const days = 14; // Display 14 days window (2 weeks)
+  const [planFilter, setPlanFilter] = useState<string[]>([]);
+  const days = 21; // Display 21 days window (3 weeks)
 
   const handlePrev = () => setStartDate(startDate.subtract(7, 'day'));
   const handleNext = () => setStartDate(startDate.add(7, 'day'));
@@ -27,10 +30,18 @@ const TimelineView: React.FC<TimelineViewProps> = ({ systems, plans }) => {
   const viewStart = startDate;
   const viewEnd = startDate.add(days, 'day');
 
-  // Filter plans based on view window
+  // Filter plans based on view window and selection
   const filteredPlans = useMemo(() => {
-    if (!showOnlyActive) return plans;
-    return plans.filter(plan => {
+    let result = plans;
+    
+    // Apply plan filter if selected (multiple)
+    if (planFilter.length > 0) {
+      result = result.filter(p => planFilter.includes(p.id));
+    } else if (!showOnlyActive) {
+      return result;
+    }
+
+    return result.filter(plan => {
       // 确定有效的开始时间
       const effectiveStartStr = plan.schedule.testStart || plan.schedule.innerGrayStart || plan.schedule.outerGrayStart;
       const effectiveEndStr = plan.schedule.fullReleaseEnd;
@@ -43,10 +54,24 @@ const TimelineView: React.FC<TimelineViewProps> = ({ systems, plans }) => {
       // Check for overlap: planStart < viewEnd && planEnd > viewStart
       return planStart.isBefore(viewEnd) && planEnd.isAfter(viewStart);
     });
-  }, [plans, viewStart, viewEnd, showOnlyActive]);
+  }, [plans, viewStart, viewEnd, showOnlyActive, planFilter]);
 
   // Filter systems based on filtered plans
   const filteredSystems = useMemo(() => {
+    // If we have highlighted conflicts, prioritize showing involved systems
+    if (highlightedConflicts && highlightedConflicts.length > 0) {
+        const conflictSystemIds = new Set(highlightedConflicts.map(c => c.systemId));
+        return systems.filter(sys => conflictSystemIds.has(sys.id));
+    }
+
+    // If specific plans are selected, only show systems involved in those plans
+    if (planFilter.length > 0) {
+      const selectedPlans = plans.filter(p => planFilter.includes(p.id));
+      const involvedSystemIds = new Set<string>();
+      selectedPlans.forEach(p => p.systems.forEach(sid => involvedSystemIds.add(sid)));
+      return systems.filter(sys => involvedSystemIds.has(sys.id));
+    }
+
     if (!showOnlyActive) return systems;
     
     // Get all system IDs involved in the filtered plans
@@ -56,13 +81,13 @@ const TimelineView: React.FC<TimelineViewProps> = ({ systems, plans }) => {
     });
 
     return systems.filter(sys => activeSystemIds.has(sys.id));
-  }, [systems, filteredPlans, showOnlyActive]);
+  }, [systems, filteredPlans, showOnlyActive, planFilter, plans, highlightedConflicts]);
 
   return (
     <div className="flex flex-col h-full border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 overflow-hidden shadow-sm">
       {/* Toolbar */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-gray-900 sticky left-0 z-30">
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4 flex-1">
           <Segmented
             options={[
               { 
@@ -87,6 +112,22 @@ const TimelineView: React.FC<TimelineViewProps> = ({ systems, plans }) => {
             value={viewMode}
             onChange={(val) => setViewMode(val as ViewMode)}
           />
+          
+          <Select
+            mode="multiple"
+            allowClear
+            showSearch
+            placeholder="筛选特定计划"
+            className="flex-1 min-w-[200px] max-w-[400px]"
+            value={planFilter}
+            onChange={setPlanFilter}
+            options={plans.map(p => ({ label: p.name, value: p.id }))}
+            filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+            maxTagCount="responsive"
+          />
+
           <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 hidden md:block"></div>
           <div className="flex items-center gap-2">
             <Button icon={<ChevronLeft size={16} />} onClick={handlePrev} />
@@ -97,7 +138,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({ systems, plans }) => {
               className="w-32"
             />
             <Button icon={<ChevronRight size={16} />} onClick={handleNext} />
-            <span className="text-gray-500 dark:text-gray-400 text-sm ml-2 hidden sm:inline">2周视图</span>
+            <span className="text-gray-500 dark:text-gray-400 text-sm ml-2 hidden sm:inline">3周视图</span>
           </div>
           {/* <Checkbox 
             checked={showOnlyActive} 
@@ -135,6 +176,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({ systems, plans }) => {
                         plans={plans} // Pass all plans for complete rendering context
                         startDate={startDate}
                         days={days}
+                        isConflict={highlightedConflicts?.some(c => c.systemId === system.id)}
                     />
                     ))}
                     {filteredSystems.length === 0 && (
@@ -154,6 +196,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({ systems, plans }) => {
                             plans={plans}
                             startDate={startDate}
                             days={days}
+                            isConflict={highlightedConflicts?.some(c => c.conflictingPlanName === plan.name || c.systemId && plan.systems.includes(c.systemId))}
                         />
                     ))}
                     {filteredPlans.length === 0 && (

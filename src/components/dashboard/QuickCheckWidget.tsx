@@ -7,9 +7,14 @@ import dayjs from 'dayjs';
 import { Conflict } from '../../types';
 import SystemSelector from '../common/SystemSelector';
 
+interface QuickCheckWidgetProps {
+  onConflictsDetected?: (conflicts: Conflict[]) => void;
+  onClearConflicts?: () => void;
+}
+
 const { RangePicker } = DatePicker;
 
-const QuickCheckWidget: React.FC = () => {
+const QuickCheckWidget: React.FC<QuickCheckWidgetProps> = ({ onConflictsDetected, onClearConflicts }) => {
   const { systems, plans } = useAppStore();
   const [selectedSystemIds, setSelectedSystemIds] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
@@ -28,12 +33,18 @@ const QuickCheckWidget: React.FC = () => {
     );
 
     setConflicts(result);
+    if (result && result.length > 0 && onConflictsDetected) {
+        onConflictsDetected(result);
+    } else if (result && result.length === 0 && onClearConflicts) {
+        onClearConflicts();
+    }
   };
 
   const handleReset = () => {
     setSelectedSystemIds([]);
     setDateRange(null);
     setConflicts(null);
+    if (onClearConflicts) onClearConflicts();
   };
 
   return (
@@ -54,9 +65,10 @@ const QuickCheckWidget: React.FC = () => {
             className="w-full" 
             value={dateRange}
             onChange={(dates) => {
-                // @ts-ignore
+                // @ts-expect-error AntD RangePicker value type mismatch
                 setDateRange(dates);
                 setConflicts(null);
+                if (onClearConflicts) onClearConflicts();
             }}
           />
         </div>
@@ -70,6 +82,7 @@ const QuickCheckWidget: React.FC = () => {
             onChange={(vals) => {
                 setSelectedSystemIds(vals);
                 setConflicts(null);
+                if (onClearConflicts) onClearConflicts();
             }}
           />
         </div>

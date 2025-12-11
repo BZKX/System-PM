@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import TimelineView from '../components/timeline/TimelineView';
 import QuickCheckWidget from '../components/dashboard/QuickCheckWidget';
 import { useAppStore } from '../store/useAppStore';
+import { Conflict } from '../types';
 
 const Dashboard: React.FC = () => {
   const { systems, plans } = useAppStore();
+  const [highlightedConflicts, setHighlightedConflicts] = useState<Conflict[] | null>(null);
 
   return (
     <div className="flex flex-col h-full">
@@ -14,10 +16,17 @@ const Dashboard: React.FC = () => {
       </div>
       
       {/* 快速冲突检测挂件 */}
-      <QuickCheckWidget />
+      <QuickCheckWidget 
+        onConflictsDetected={setHighlightedConflicts}
+        onClearConflicts={() => setHighlightedConflicts(null)}
+      />
 
       <div className="flex-grow min-h-0">
-        <TimelineView systems={systems} plans={plans} />
+        <TimelineView 
+            systems={systems} 
+            plans={plans} 
+            highlightedConflicts={highlightedConflicts}
+        />
       </div>
     </div>
   );

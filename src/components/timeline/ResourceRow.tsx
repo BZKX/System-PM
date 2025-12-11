@@ -10,9 +10,10 @@ interface ResourceRowProps {
   plans: Plan[];
   startDate: dayjs.Dayjs;
   days: number;
+  isConflict?: boolean;
 }
 
-const ResourceRow: React.FC<ResourceRowProps> = ({ system, plans, startDate, days }) => {
+const ResourceRow: React.FC<ResourceRowProps> = ({ system, plans, startDate, days, isConflict }) => {
   // 找出所有涉及该系统的计划
   const relevantPlans = plans.filter(p => p.systems.includes(system.id));
 
@@ -21,13 +22,16 @@ const ResourceRow: React.FC<ResourceRowProps> = ({ system, plans, startDate, day
   // 关键：OuterGray 和 FullRelease 需要特别标注
 
   return (
-    <div className="flex border-b border-gray-100 dark:border-gray-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors" style={{ height: ROW_HEIGHT }}>
+    <div 
+        className={`flex border-b border-gray-100 dark:border-gray-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors ${isConflict ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : ''}`} 
+        style={{ height: ROW_HEIGHT }}
+    >
       <div 
-        className="flex-shrink-0 border-r border-gray-200 dark:border-gray-800 flex flex-col justify-center px-4 bg-white dark:bg-gray-900 sticky left-0 z-10"
+        className={`flex-shrink-0 border-r border-gray-200 dark:border-gray-800 flex flex-col justify-center px-4 sticky left-0 z-10 ${isConflict ? 'bg-red-50 dark:bg-red-900/20' : 'bg-white dark:bg-gray-900'}`}
         style={{ width: SIDEBAR_WIDTH }}
       >
-        <div className="font-medium text-gray-800 dark:text-gray-200 truncate" title={system.name}>{system.name}</div>
-        <div className="text-xs text-gray-500 dark:text-gray-400 truncate" title={system.department}>{system.department}</div>
+        <div className={`font-medium truncate ${isConflict ? 'text-red-700 dark:text-red-300' : 'text-gray-800 dark:text-gray-200'}`} title={system.name}>{system.name}</div>
+        <div className={`text-xs truncate ${isConflict ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'}`} title={system.department}>{system.department}</div>
       </div>
       
       <div className="relative flex-grow flex">
@@ -36,7 +40,7 @@ const ResourceRow: React.FC<ResourceRowProps> = ({ system, plans, startDate, day
           {Array.from({ length: days }).map((_, i) => (
             <div 
               key={i} 
-              className="flex-1 border-r border-gray-100 dark:border-gray-800 h-full" 
+              className="flex-1 border-r border-gray-100 dark:border-gray-800 h-full min-w-[40px]" 
             />
           ))}
         </div>

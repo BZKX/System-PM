@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Layout, Menu, theme, Button, Popconfirm, message, Upload, Modal } from 'antd';
+import React, { useState, useRef, useEffect } from 'react';
+import { Layout, Menu, theme, Button, Popconfirm, message, Upload, Modal, Tour, type TourProps } from 'antd';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Server, 
@@ -11,7 +11,8 @@ import {
   Trash2,
   Moon,
   Sun,
-  FileChartColumn
+  FileChartColumn,
+  HelpCircle
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 
@@ -20,7 +21,7 @@ const { Header, Sider, Content } = Layout;
 const MainLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const { theme: currentTheme, toggleTheme } = useAppStore();
+  const { theme: currentTheme, toggleTheme, hasSeenGuide, completeGuide, resetGuide } = useAppStore();
   const {
     token: { borderRadiusLG },
   } = theme.useToken();
@@ -28,6 +29,60 @@ const MainLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { clearData, systems, plans, setInitialData } = useAppStore();
+
+  // Tour refs
+  const sidebarNavRef = useRef(null);
+  const themeToggleRef = useRef(null);
+  const settingsBtnRef = useRef(null);
+  const mainContentRef = useRef(null);
+  const helpBtnRef = useRef(null);
+
+  const [isTourOpen, setIsTourOpen] = useState(false);
+
+  useEffect(() => {
+    if (!hasSeenGuide) {
+        // Small delay to ensure elements are rendered
+        setTimeout(() => setIsTourOpen(true), 500);
+    }
+  }, [hasSeenGuide]);
+
+  const handleTourClose = () => {
+    setIsTourOpen(false);
+    completeGuide();
+  };
+
+  const tourSteps: TourProps['steps'] = [
+    {
+      title: '欢迎使用 System PM',
+      description: '这是一个用于系统借用和上线计划管理的工具。让我们花一分钟了解主要功能。',
+      target: () => document.body, // Center screen
+    },
+    {
+      title: '功能导航',
+      description: '在这里切换不同的视图：仪表盘查看概览，计划管理查看甘特图，系统管理维护基础数据。',
+      target: () => sidebarNavRef.current,
+    },
+    {
+      title: '操作区域',
+      description: '这里是主要的工作区域。在不同的页面，你可以查看图表、编辑计划或管理系统列表。',
+      target: () => mainContentRef.current,
+    },
+    {
+      title: '外观设置',
+      description: '点击这里可以切换亮色/暗色模式，适应不同的光照环境。',
+      target: () => themeToggleRef.current,
+    },
+    {
+      title: '数据管理',
+      description: '非常重要！这里可以导入/导出数据备份，或清空缓存。建议定期导出备份以防数据丢失。',
+      target: () => settingsBtnRef.current,
+    },
+    {
+        title: '随时回顾',
+        description: '如果有疑问，可以随时点击这个按钮重新查看新手引导。',
+        target: () => helpBtnRef.current,
+    }
+  ];
 
   const handleClearData = () => {
     clearData();
@@ -160,7 +215,7 @@ const MainLayout: React.FC = () => {
                 System PM
             </h1>
             </div>
-            <div className="flex-1 overflow-auto py-2">
+            <div className="flex-1 overflow-auto py-2" ref={sidebarNavRef}>
                 <Menu
                     theme={currentTheme}
                     mode="inline"
@@ -173,26 +228,45 @@ const MainLayout: React.FC = () => {
             
             {/* 底部工具栏 */}
             <div className="p-2 border-t border-gray-200 dark:border-gray-800 flex flex-col gap-1">
-                <Button 
-                    type="text" 
-                    block 
-                    icon={currentTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-                    className={collapsed ? 'px-0 justify-center' : 'justify-start'}
-                    onClick={toggleTheme}
-                    title={currentTheme === 'dark' ? "切换亮色模式" : "切换暗色模式"}
-                >
-                    {!collapsed && (currentTheme === 'dark' ? "亮色模式" : "暗色模式")}
-                </Button>
-                <Button 
-                    type="text" 
-                    block 
-                    icon={<Settings size={18} />}
-                    className={collapsed ? 'px-0 justify-center' : 'justify-start'}
-                    onClick={() => setIsSettingsOpen(true)}
-                    title="数据管理"
-                >
-                    {!collapsed && "数据管理"}
-                </Button>
+                <div ref={themeToggleRef}>
+                    <Button 
+                        type="text" 
+                        block 
+                        icon={currentTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                        className={collapsed ? 'px-0 justify-center' : 'justify-start'}
+                        onClick={toggleTheme}
+                        title={currentTheme === 'dark' ? "切换亮色模式" : "切换暗色模式"}
+                    >
+                        {!collapsed && (currentTheme === 'dark' ? "亮色模式" : "暗色模式")}
+                    </Button>
+                </div>
+                <div ref={settingsBtnRef}>
+                    <Button 
+                        type="text" 
+                        block 
+                        icon={<Settings size={18} />}
+                        className={collapsed ? 'px-0 justify-center' : 'justify-start'}
+                        onClick={() => setIsSettingsOpen(true)}
+                        title="数据管理"
+                    >
+                        {!collapsed && "数据管理"}
+                    </Button>
+                </div>
+                <div ref={helpBtnRef}>
+                    <Button 
+                        type="text" 
+                        block 
+                        icon={<HelpCircle size={18} />}
+                        className={collapsed ? 'px-0 justify-center' : 'justify-start'}
+                        onClick={() => {
+                            resetGuide();
+                            setIsTourOpen(true);
+                        }}
+                        title="新手引导"
+                    >
+                        {!collapsed && "新手引导"}
+                    </Button>
+                </div>
             </div>
         </div>
       </Sider>
@@ -206,7 +280,7 @@ const MainLayout: React.FC = () => {
           </button>
           <span className="ml-4 text-gray-500 dark:text-gray-400 text-sm">系统借用调度管理台</span>
         </Header>
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto" ref={mainContentRef}>
             <Content
             style={{
                 margin: '24px 16px',
@@ -223,7 +297,9 @@ const MainLayout: React.FC = () => {
             <Outlet />
             </Content>
         </div>
-      </Layout>
+        {/* 新手引导 */}
+      <Tour open={isTourOpen} onClose={handleTourClose} steps={tourSteps} />
+    </Layout>
 
       {/* 数据管理弹窗 */}
       <Modal
