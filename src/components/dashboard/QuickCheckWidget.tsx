@@ -65,8 +65,7 @@ const QuickCheckWidget: React.FC<QuickCheckWidgetProps> = ({ onConflictsDetected
             className="w-full" 
             value={dateRange}
             onChange={(dates) => {
-                // @ts-expect-error AntD RangePicker value type mismatch
-                setDateRange(dates);
+                setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null);
                 setConflicts(null);
                 if (onClearConflicts) onClearConflicts();
             }}

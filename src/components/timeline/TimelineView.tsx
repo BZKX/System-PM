@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, LayoutList, Layers } from 'lucide-react';
 import TimelineHeader from './TimelineHeader';
 import ResourceRow from './ResourceRow';
 import PlanRow from './PlanRow';
-import { System, Plan } from '../../types';
+import { Conflict, System, Plan } from '../../types';
 import { SIDEBAR_WIDTH } from './constants';
 
 interface TimelineViewProps {
