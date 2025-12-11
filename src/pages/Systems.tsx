@@ -104,8 +104,8 @@ const Systems: React.FC = () => {
     <div>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
-            <h2 className="text-xl font-semibold text-gray-800">系统管理</h2>
-            <p className="text-sm text-gray-500 mt-1">管理所有前后端系统资源及其归属部门</p>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">系统管理</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">管理所有前后端系统资源及其归属部门</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
             <Input.Search 
@@ -157,7 +157,7 @@ const Systems: React.FC = () => {
             </div>
         </>
       ) : (
-        <div className="bg-white p-12 rounded-lg border border-dashed border-gray-300 flex justify-center">
+        <div className="bg-white dark:bg-gray-900 p-12 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 flex justify-center">
             <Empty description="暂无匹配的系统数据" />
         </div>
       )}

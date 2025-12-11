@@ -38,9 +38,9 @@ const QuickCheckWidget: React.FC = () => {
 
   return (
     <Card 
-      className="mb-4 shadow-sm border-blue-100" 
+      className="mb-4 shadow-sm border-blue-100 dark:border-blue-900/50" 
       title={
-        <div className="flex items-center gap-2 text-blue-800">
+        <div className="flex items-center gap-2 text-blue-800 dark:text-blue-300">
           <Search size={18} />
           <span>排期冲突速查</span>
         </div>
@@ -49,7 +49,7 @@ const QuickCheckWidget: React.FC = () => {
     >
       <div className="flex flex-col md:flex-row gap-4 items-end">
         <div className="flex-1 w-full">
-          <label className="block text-xs font-medium text-gray-500 mb-1">外灰/全网时间段</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">外灰/全网时间段</label>
           <RangePicker 
             className="w-full" 
             value={dateRange}
@@ -61,7 +61,7 @@ const QuickCheckWidget: React.FC = () => {
           />
         </div>
         <div className="flex-1 w-full">
-          <label className="block text-xs font-medium text-gray-500 mb-1">涉及系统</label>
+          <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">涉及系统</label>
           <SystemSelector
             systems={systems}
             placeholder="粘贴系统列表或选择"
@@ -106,7 +106,7 @@ const QuickCheckWidget: React.FC = () => {
                   {conflicts.map((c, idx) => (
                     <li key={idx}>
                       <span className="font-semibold">{c.systemName}</span> 被计划 
-                      <span className="font-semibold text-blue-600 mx-1">“{c.conflictingPlanName}”</span> 
+                      <span className="font-semibold text-blue-600 dark:text-blue-400 mx-1">“{c.conflictingPlanName}”</span> 
                       占用 ({dayjs(c.startDate).format('MM-DD')} ~ {dayjs(c.endDate).format('MM-DD')})
                     </li>
                   ))}

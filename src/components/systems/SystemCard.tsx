@@ -38,7 +38,7 @@ const SystemCard: React.FC<SystemCardProps> = ({ system, onEdit, onDelete }) => 
     >
       <Card.Meta
         avatar={
-          <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
+          <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400">
             <Box size={24} />
           </div>
         }
@@ -50,13 +50,13 @@ const SystemCard: React.FC<SystemCardProps> = ({ system, onEdit, onDelete }) => 
         description={
           <div className="mt-2 space-y-2">
             <div>
-                <div className="text-gray-500 text-xs uppercase font-semibold mb-1">归属部门</div>
-                <div className="text-gray-700 font-medium truncate" title={system.department}>{system.department}</div>
+                <div className="text-gray-500 dark:text-gray-400 text-xs uppercase font-semibold mb-1">归属部门</div>
+                <div className="text-gray-700 dark:text-gray-300 font-medium truncate" title={system.department}>{system.department}</div>
             </div>
             {system.owner && (
                 <div>
-                    <div className="text-gray-500 text-xs uppercase font-semibold mb-1">负责人</div>
-                    <div className="text-gray-700 font-medium truncate" title={system.owner}>{system.owner}</div>
+                    <div className="text-gray-500 dark:text-gray-400 text-xs uppercase font-semibold mb-1">负责人</div>
+                    <div className="text-gray-700 dark:text-gray-300 font-medium truncate" title={system.owner}>{system.owner}</div>
                 </div>
             )}
           </div>

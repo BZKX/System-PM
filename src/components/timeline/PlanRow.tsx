@@ -2,7 +2,7 @@ import React from 'react';
 import dayjs from 'dayjs';
 import { Popover } from 'antd';
 import { Plan, System } from '../../types';
-import { PIXELS_PER_DAY, ROW_HEIGHT, SIDEBAR_WIDTH } from './constants';
+import { ROW_HEIGHT, SIDEBAR_WIDTH } from './constants';
 import { ConflictEngine } from '../../utils/conflictEngine';
 
 interface PlanRowProps {
@@ -25,9 +25,6 @@ const PlanRow: React.FC<PlanRowProps> = ({ plan, systems, plans, startDate, days
   
   const offsetDays = start.diff(startDate, 'day');
   const durationDays = end.diff(start, 'day') + 1; // inclusive
-
-  const left = offsetDays * PIXELS_PER_DAY;
-  const width = durationDays * PIXELS_PER_DAY;
 
   // Render phases logic (处理空值)
   const testDuration = schedule.testStart && schedule.testEnd 
@@ -54,27 +51,30 @@ const PlanRow: React.FC<PlanRowProps> = ({ plan, systems, plans, startDate, days
     .filter(Boolean)
     .join(', ');
 
+  // Calculate percentage based position and width
+  const leftPercent = (offsetDays / days) * 100;
+  const widthPercent = (durationDays / days) * 100;
+
   return (
-    <div className="flex border-b border-gray-100 hover:bg-blue-50 transition-colors" style={{ height: ROW_HEIGHT }}>
+    <div className="flex border-b border-gray-100 dark:border-gray-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors" style={{ height: ROW_HEIGHT + 20 }}>
       {/* Sidebar / Header */}
       <div 
-        className="flex-shrink-0 border-r border-gray-200 flex flex-col justify-center px-4 bg-white sticky left-0 z-10"
+        className="flex-shrink-0 border-r border-gray-200 dark:border-gray-800 flex flex-col justify-center px-4 bg-white dark:bg-gray-900 sticky left-0 z-10"
         style={{ width: SIDEBAR_WIDTH }}
       >
-        <div className="font-medium text-gray-800 truncate" title={plan.name}>{plan.name}</div>
-        <div className="text-xs text-gray-500 truncate mt-1">PM: {plan.owner}</div>
-        <div className="text-xs text-gray-400 truncate mt-0.5">系统: {plan.systems.length}个</div>
+        <div className="font-medium text-gray-800 dark:text-gray-200 truncate" title={plan.name}>{plan.name}</div>
+        <div className="text-xs text-gray-500 dark:text-gray-400 truncate mt-1">PM: {plan.owner}</div>
+        <div className="text-xs text-gray-400 dark:text-gray-500 truncate mt-0.5">系统: {plan.systems.length}个</div>
       </div>
       
       {/* Timeline Content */}
-      <div className="relative flex-grow" style={{ width: days * PIXELS_PER_DAY }}>
+      <div className="relative flex-grow flex">
         {/* Grid Lines */}
-        <div className="absolute inset-0 flex pointer-events-none">
+        <div className="absolute inset-0 flex pointer-events-none w-full">
           {Array.from({ length: days }).map((_, i) => (
             <div 
               key={i} 
-              className="border-r border-gray-100 h-full" 
-              style={{ width: PIXELS_PER_DAY }}
+              className="flex-1 border-r border-gray-100 dark:border-gray-800 h-full" 
             />
           ))}
         </div>
@@ -108,13 +108,16 @@ const PlanRow: React.FC<PlanRowProps> = ({ plan, systems, plans, startDate, days
                 className={`absolute top-2 h-10 rounded-md shadow-sm border text-xs flex items-center overflow-hidden cursor-pointer opacity-90 hover:opacity-100 hover:shadow-md transition-all z-0
                   ${hasConflict ? 'border-red-500 ring-2 ring-red-200' : 'border-blue-200'}
                 `}
-                style={{ left, width: Math.max(width, 2) }}
+                style={{ 
+                    left: `${leftPercent}%`, 
+                    width: `max(${widthPercent}%, 2px)` 
+                }}
               >
                 <div className="h-full flex w-full">
-                  <div style={{ flex: testDuration }} className="bg-green-100 border-r border-white/50 flex items-center justify-center text-green-700" title="测试">T</div>
-                  <div style={{ flex: innerDuration }} className="bg-blue-100 border-r border-white/50 flex items-center justify-center text-blue-700" title="内灰">I</div>
-                  <div style={{ flex: outerDuration }} className={`bg-orange-200 border-r border-white/50 flex items-center justify-center text-orange-800 ${hasConflict ? 'animate-pulse bg-red-200' : ''}`} title="外灰">O</div>
-                  <div style={{ flex: fullDuration }} className={`bg-red-200 flex items-center justify-center text-red-800 ${hasConflict ? 'animate-pulse bg-red-300' : ''}`} title="全网">F</div>
+                  <div style={{ flex: testDuration }} className="bg-green-100 dark:bg-green-900/60 border-r border-white/50 dark:border-white/10 flex items-center justify-center text-green-700 dark:text-green-300" title="测试"></div>
+                  <div style={{ flex: innerDuration }} className="bg-blue-100 dark:bg-blue-900/60 border-r border-white/50 dark:border-white/10 flex items-center justify-center text-blue-700 dark:text-blue-300" title="内灰"></div>
+                  <div style={{ flex: outerDuration }} className={`bg-orange-200 dark:bg-orange-900/60 border-r border-white/50 dark:border-white/10 flex items-center justify-center text-orange-800 dark:text-orange-300 ${hasConflict ? 'animate-pulse bg-red-200 dark:bg-red-900' : ''}`} title="外灰"></div>
+                  <div style={{ flex: fullDuration }} className={`bg-red-200 dark:bg-red-900/60 flex items-center justify-center text-red-800 dark:text-red-300 ${hasConflict ? 'animate-pulse bg-red-300 dark:bg-red-800' : ''}`} title="全网"></div>
                 </div>
               </div>
             </Popover>

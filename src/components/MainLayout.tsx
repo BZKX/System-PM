@@ -9,6 +9,8 @@ import {
   Download,
   Upload as UploadIcon,
   Trash2,
+  Moon,
+  Sun,
   FileChartColumn
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
@@ -18,8 +20,9 @@ const { Header, Sider, Content } = Layout;
 const MainLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { theme: currentTheme, toggleTheme } = useAppStore();
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { borderRadiusLG },
   } = theme.useToken();
   
   const navigate = useNavigate();
@@ -143,27 +146,43 @@ const MainLayout: React.FC = () => {
   ];
 
   return (
-    <Layout className="h-screen w-screen overflow-hidden">
-      <Sider trigger={null} collapsible collapsed={collapsed} theme="light" className="border-r border-gray-200">
+    <Layout className="h-screen w-screen overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-950">
+      <Sider 
+        trigger={null} 
+        collapsible 
+        collapsed={collapsed} 
+        className="border-r border-gray-200 dark:border-gray-800 !bg-white/70 dark:!bg-gray-900/70 backdrop-blur-2xl z-20"
+        width={220}
+      >
         <div className="flex flex-col h-full">
-            <div className="h-16 flex items-center justify-center border-b border-gray-200">
-            <h1 className={`font-bold text-xl text-blue-600 transition-all duration-300 ${collapsed ? 'scale-0 w-0' : 'scale-100'}`}>
+            <div className="h-16 flex items-center justify-center border-b border-gray-200 dark:border-gray-800">
+            <h1 className={`font-bold text-xl text-blue-600 dark:text-blue-500 transition-all duration-300 ${collapsed ? 'scale-0 w-0' : 'scale-100'}`}>
                 System PM
             </h1>
             </div>
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 overflow-auto py-2">
                 <Menu
-                theme="light"
-                mode="inline"
-                selectedKeys={[location.pathname]}
-                items={items}
-                onClick={({ key }) => navigate(key)}
-                className="border-none mt-2"
+                    theme={currentTheme}
+                    mode="inline"
+                    selectedKeys={[location.pathname]}
+                    items={items}
+                    onClick={({ key }) => navigate(key)}
+                    className="border-none !bg-transparent"
                 />
             </div>
             
             {/* 底部工具栏 */}
-            <div className="p-2 border-t border-gray-200">
+            <div className="p-2 border-t border-gray-200 dark:border-gray-800 flex flex-col gap-1">
+                <Button 
+                    type="text" 
+                    block 
+                    icon={currentTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                    className={collapsed ? 'px-0 justify-center' : 'justify-start'}
+                    onClick={toggleTheme}
+                    title={currentTheme === 'dark' ? "切换亮色模式" : "切换暗色模式"}
+                >
+                    {!collapsed && (currentTheme === 'dark' ? "亮色模式" : "暗色模式")}
+                </Button>
                 <Button 
                     type="text" 
                     block 
@@ -177,15 +196,15 @@ const MainLayout: React.FC = () => {
             </div>
         </div>
       </Sider>
-      <Layout className="flex flex-col h-full overflow-hidden">
-        <Header style={{ padding: 0, background: colorBgContainer }} className="flex items-center px-4 border-b border-gray-200 flex-shrink-0">
+      <Layout className="flex flex-col h-full overflow-hidden bg-transparent">
+        <Header className="flex items-center px-4 border-b border-gray-200 dark:border-gray-800 flex-shrink-0 !bg-white/60 dark:!bg-gray-900/60 backdrop-blur-xl z-10 sticky top-0">
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors text-gray-600 dark:text-gray-300"
           >
             <MenuIcon size={20} />
           </button>
-          <span className="ml-4 text-gray-500 text-sm">系统借用调度管理台</span>
+          <span className="ml-4 text-gray-500 dark:text-gray-400 text-sm">系统借用调度管理台</span>
         </Header>
         <div className="flex-1 overflow-auto">
             <Content
@@ -193,8 +212,12 @@ const MainLayout: React.FC = () => {
                 margin: '24px 16px',
                 padding: 24,
                 minHeight: 280,
-                background: colorBgContainer,
+                background: currentTheme === 'dark' ? 'rgba(31, 41, 55, 0.4)' : 'rgba(255, 255, 255, 1)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
                 borderRadius: borderRadiusLG,
+                border: currentTheme === 'dark' ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(255,255,255,0.4)',
+                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
             }}
             >
             <Outlet />

@@ -97,9 +97,6 @@ devDependencies:
   vite:
     specifier: ^6.3.5
     version: mirrors.huaweicloud.com/vite@6.4.1(@types/node@22.19.2)
-  vite-plugin-trae-solo-badge:
-    specifier: ^1.0.0
-    version: mirrors.huaweicloud.com/vite-plugin-trae-solo-badge@1.0.0(vite@6.4.1)
   vite-tsconfig-paths:
     specifier: ^5.1.4
     version: mirrors.huaweicloud.com/vite-tsconfig-paths@5.1.4(typescript@5.8.3)(vite@6.4.1)
@@ -3979,12 +3976,6 @@ packages:
       typescript: mirrors.huaweicloud.com/typescript@5.8.3
     dev: true
 
-  mirrors.huaweicloud.com/tslib@2.8.1:
-    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==, registry: http://111.230.199.61:6888/, tarball: https://mirrors.huaweicloud.com/repository/npm/tslib/-/tslib-2.8.1.tgz}
-    name: tslib
-    version: 2.8.1
-    dev: true
-
   mirrors.huaweicloud.com/type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==, registry: http://111.230.199.61:6888/, tarball: https://mirrors.huaweicloud.com/repository/npm/type-check/-/type-check-0.4.0.tgz}
     name: type-check
@@ -4062,18 +4053,6 @@ packages:
     version: 13.0.0
     hasBin: true
     dev: false
-
-  mirrors.huaweicloud.com/vite-plugin-trae-solo-badge@1.0.0(vite@6.4.1):
-    resolution: {integrity: sha512-vrNr4QmbcqqMeJPzHBqef70nqDzN6CQngFwuXTJMAgn3zMU4TWzvY0B3BRdjUjvg/BtvNJLlwu2cPKXTUjalHg==, registry: http://111.230.199.61:6888/, tarball: https://mirrors.huaweicloud.com/repository/npm/vite-plugin-trae-solo-badge/-/vite-plugin-trae-solo-badge-1.0.0.tgz}
-    id: mirrors.huaweicloud.com/vite-plugin-trae-solo-badge/1.0.0
-    name: vite-plugin-trae-solo-badge
-    version: 1.0.0
-    peerDependencies:
-      vite: '>=4.0.0'
-    dependencies:
-      tslib: mirrors.huaweicloud.com/tslib@2.8.1
-      vite: mirrors.huaweicloud.com/vite@6.4.1(@types/node@22.19.2)
-    dev: true
 
   mirrors.huaweicloud.com/vite-tsconfig-paths@5.1.4(typescript@5.8.3)(vite@6.4.1):
     resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==, registry: http://111.230.199.61:6888/, tarball: https://mirrors.huaweicloud.com/repository/npm/vite-tsconfig-paths/-/vite-tsconfig-paths-5.1.4.tgz}
